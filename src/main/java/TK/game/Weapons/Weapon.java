@@ -6,7 +6,7 @@ import java.util.Random;
 public abstract class Weapon {
     Random rd = new Random();
     String name;
-    Integer tier;
+    Tier tier;
     Integer damage;
     Integer maxShotsFired;
     Integer ammo;
@@ -14,15 +14,15 @@ public abstract class Weapon {
     Integer critChance;
     String sound;
 
-    public Weapon(Integer tier, Integer damage, Integer maxShotsFired, Integer clipSize, Integer critChance) {
+    public Weapon(Tier tier) {
         this.name = getName();
         this.tier = tier;
-        this.damage = damage;
-        this.clipSize = clipSize;
-        this.ammo = clipSize;
-        this.critChance = critChance;
+        this.damage = getBaseDamage();
+        this.clipSize = getzClipSize();
+        this.ammo = getCritChance();
+        this.critChance = getCritChance();
         this.sound = getSound();
-        this.maxShotsFired = maxShotsFired;
+        this.maxShotsFired = getMaxShots();
     }
 
     public void reload() {
@@ -67,6 +67,10 @@ public abstract class Weapon {
 
     public abstract String getSound();
     public abstract String getName();
+    public abstract Integer getBaseDamage();
+    public abstract Integer getMaxShots();
+    public abstract Integer getzClipSize();
+    public abstract Integer getCritChance();
 
     public static java.util.List<String> sniperNames = new ArrayList<>();
     static {
