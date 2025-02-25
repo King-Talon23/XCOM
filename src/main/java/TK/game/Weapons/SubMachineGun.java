@@ -1,6 +1,7 @@
 package TK.game.Weapons;
 
-import java.util.Random;
+import java.util.*;
+
 
 public class SubMachineGun extends Weapon {
     Random random = new Random();
@@ -18,6 +19,7 @@ public class SubMachineGun extends Weapon {
     public String getName() {
         return SMGNames.get(random.nextInt(SMGNames.size()));
     }
+
     @Override
     public Integer getBaseDamage() {
         // damage per bullet
@@ -60,13 +62,13 @@ public class SubMachineGun extends Weapon {
     @Override
     public Integer getCritChance() {
         return switch (this.tier) {
-            case ONE -> getRandomIntInRange(1,2);
+            case ONE -> getRandomIntInRange(1, 2);
 
-            case TWO -> getRandomIntInRange(2,3);
+            case TWO -> getRandomIntInRange(2, 3);
 
-            case THREE -> getRandomIntInRange(3,4);
+            case THREE -> getRandomIntInRange(3, 4);
 
-            case FOUR -> getRandomIntInRange(5,7);
+            case FOUR -> getRandomIntInRange(5, 7);
         };
     }
 }

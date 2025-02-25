@@ -2,9 +2,6 @@ package TK.game.Weapons;
 
 import java.util.Random;
 
-import static TK.game.Weapons.Weapon.heavyGunSounds;
-import static TK.game.Weapons.Weapon.sniperNames;
-
 public class SniperRifle extends Weapon {
     Random random = new Random();
 
