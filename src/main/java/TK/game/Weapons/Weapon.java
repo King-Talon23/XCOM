@@ -71,6 +71,12 @@ public abstract class Weapon {
     public abstract Integer getMaxShots();
     public abstract Integer getzClipSize();
     public abstract Integer getCritChance();
+    public int getRandomIntInRange(int min, int max) {
+        if (min > max) {
+            throw new IllegalArgumentException("Minimum cannot be higher than maximum");
+        }
+        return rd.nextInt((max - min) + 1) + min;
+    }
 
     public static java.util.List<String> sniperNames = new ArrayList<>();
     static {

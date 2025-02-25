@@ -2,7 +2,7 @@ package TK.game.Weapons;
 
 import java.util.Random;
 
-public class AssaultRifle extends Weapon{
+public class AssaultRifle extends Weapon {
     Random random = new Random();
 
     public AssaultRifle(Tier tier) {
@@ -23,79 +23,56 @@ public class AssaultRifle extends Weapon{
     @Override
     public Integer getBaseDamage() {
         // damage per bullet
-        switch (this.tier) {
-            case ONE -> {
-                return 2;
-            }
-            case TWO -> {
-                return 3;
-            }
-            case THREE -> {
-                return 4;
-            }
-            case FOUR -> {
-                return 6;
-            }
-        }
-       throw new IllegalArgumentException("Unknown Tier");
+        return switch (this.tier) {
+            case ONE -> getRandomIntInRange(2, 3);
+
+            case TWO -> getRandomIntInRange(3, 4);
+
+            case THREE -> getRandomIntInRange(4, 5);
+
+            case FOUR -> getRandomIntInRange(6, 7);
+
+        };
     }
 
     @Override
     public Integer getMaxShots() {
-        switch (this.tier) {
-            case ONE -> {
-                return 3;
-            }
-            case TWO -> {
-                return 4;
-            }
-            case THREE -> {
-                return 5;
-            }
-            case FOUR -> {
-                return 7;
-            }
-        }
-        throw new IllegalArgumentException("Unknown Tier");
+        return switch (this.tier) {
+            case ONE -> 3;
+
+            case TWO -> 4;
+
+            case THREE -> 5;
+
+            case FOUR -> 7;
+
+        };
     }
 
     @Override
     public Integer getzClipSize() {
-        switch (this.tier) {
-            case ONE -> {
-                return 6;
-            }
-            case TWO -> {
-                return 9;
-            }
-            case THREE -> {
-                return 12;
-            }
-            case FOUR -> {
-                return 15;
-            }
-        }
-        throw new IllegalArgumentException("Unknown Tier");
+        return switch (this.tier) {
+            case ONE -> 6;
 
+            case TWO -> 9;
+
+            case THREE -> 12;
+
+            case FOUR -> 15;
+        };
     }
+
 
     @Override
     public Integer getCritChance() {
-        switch (this.tier) {
-            case ONE -> {
-                return 7;
-            }
-            case TWO -> {
-                return 5;
-            }
-            case THREE -> {
-                return 9;
-            }
-            case FOUR -> {
-                return 12;
-            }
-        }
-        throw new IllegalArgumentException("Unknown Tier");
+        return switch (this.tier) {
+            case ONE -> getRandomIntInRange(3,5);
 
+            case TWO -> getRandomIntInRange(5,7);
+
+            case THREE -> getRandomIntInRange(7,9);
+
+            case FOUR -> getRandomIntInRange(10,12);
+        };
     }
 }
