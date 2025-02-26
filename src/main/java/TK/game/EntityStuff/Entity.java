@@ -18,7 +18,7 @@ public abstract class Entity {
     public Rank rank;
     public Integer armour;
     public Weapon weapon;
-    public List items;
+    public List<String> items;
     public Integer cover;
     public Boolean onOverwatch;
     public static Boolean alive;
@@ -41,7 +41,7 @@ public abstract class Entity {
     public int aimAtTarget(Entity target) {
         int hitChance = this.aim - target.cover;
 
-        if (this.items.contains(scope)){
+        if (this.items.contains("scope")){
             hitChance += 10;
         }
         if (this.weapon instanceof SniperRifle) {
@@ -63,7 +63,7 @@ public abstract class Entity {
     public Boolean overwatch(Entity target) {
         if (this.onOverwatch) {
             this.onOverwatch = false;
-            System.out.print(this.name + " reacts!");
+            System.out.print(this.firstname + " reacts!");
             this.handleOverwatch(target);
             return true;
         }
