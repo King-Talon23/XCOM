@@ -2,9 +2,10 @@ package TK.game.Weapons;
 
 import java.util.Random;
 
-public class AssaultRifle extends Weapon {
-    Random random = new Random();
+import static TK.game.game.getRandomIntInRange;
+import static TK.game.game.getRandomListItem;
 
+public class AssaultRifle extends Weapon {
     public AssaultRifle(Tier tier) {
         super(tier);
     }
@@ -12,12 +13,12 @@ public class AssaultRifle extends Weapon {
 
     @Override
     public String getSound() {
-        return lightGunSounds.get(random.nextInt(lightGunSounds.size()));
+        return getRandomListItem(lightGunSounds);
     }
 
     @Override
     public String getName() {
-        return ARNames.get(random.nextInt(ARNames.size()));
+        return getRandomListItem(ARNames);
     }
 
     @Override
