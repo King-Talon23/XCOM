@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import static TK.game.game.getRandomIntInRange;
+import static TK.game.game.getRandomListItem;
 
 public abstract class Entity {
     Random rd = new Random();
@@ -21,37 +22,18 @@ public abstract class Entity {
     public List<String> items;
     public Integer cover;
     public Boolean onOverwatch;
-    public static Boolean alive;
 
-    public Entity(Integer hp, Integer aim,Rank rank, String firstname, String lastname, Integer armour, Weapon weapon, List items) {
+    public Entity(Integer hp, Integer aim,Rank rank, Integer armour, Weapon weapon, List items) {
         this.hp = hp;
         this.aim = aim;
         this.rank = rank;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.firstname = getFirstname();
+        this.lastname = getLastname();
         this.armour = armour;
         this.weapon = weapon;
         this.items = items;
         this.cover = 0;
         this.onOverwatch = false;
-        this.alive = true;
-
-    }
-
-    public int aimAtTarget(Entity target) {
-        int hitChance = this.aim - target.cover;
-
-        if (this.items.contains("scope")){
-            hitChance += 10;
-        }
-        if (this.weapon instanceof SniperRifle) {
-            hitChance += 10;
-        }
-        if (this.weapon instanceof ShotGun) {
-            hitChance -= 10;
-        }
-        hitChance = Math.max(0, Math.min(hitChance, 100));
-        return hitChance;
     }
 
     public void isDead() {
@@ -59,20 +41,12 @@ public abstract class Entity {
             this.handleDeath();
         }
     }
-
-    public Boolean overwatch(Entity target) {
-        if (this.onOverwatch) {
-            this.onOverwatch = false;
-            System.out.print(this.firstname + " reacts!");
-            this.handleOverwatch(target);
-            return true;
-        }
-        return false;
-    }
-
     public void reload() {
         this.weapon.reload();
     }
+
+    public abstract String getFirstname();
+    public abstract String getLastname();
 
     private int isCrit(Entity target) {
         return this.weapon.critChance - target.cover / 4;
@@ -104,6 +78,23 @@ public abstract class Entity {
             return false;
         }
     }
+
+    public int aimAtTarget(Entity target) {
+        int hitChance = this.aim - target.cover;
+
+        if (this.items.contains("scope")){
+            hitChance += 10;
+        }
+        if (this.weapon instanceof SniperRifle) {
+            hitChance += 10;
+        }
+        if (this.weapon instanceof ShotGun) {
+            hitChance -= 10;
+        }
+        hitChance = Math.max(0, Math.min(hitChance, 100));
+        return hitChance;
+    }
+
 
     public boolean handleOverwatch(Entity target) {
         int chance = this.aimAtTarget(target);

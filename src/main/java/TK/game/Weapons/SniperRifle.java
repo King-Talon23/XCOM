@@ -2,21 +2,22 @@ package TK.game.Weapons;
 
 import java.util.Random;
 
-public class SniperRifle extends Weapon {
-    Random random = new Random();
+import static TK.game.game.getRandomIntInRange;
+import static TK.game.game.getRandomListItem;
 
+public class SniperRifle extends Weapon {
     public SniperRifle(Tier tier) {
         super(tier);
     }
 
     @Override
     public String getSound() {
-        return heavyGunSounds.get(random.nextInt(heavyGunSounds.size()));
+        return getRandomListItem(heavyGunSounds);
     }
 
     @Override
     public String getName() {
-        return sniperNames.get(random.nextInt(sniperNames.size()));
+        return getRandomListItem(sniperNames);
     }
 
     @Override
