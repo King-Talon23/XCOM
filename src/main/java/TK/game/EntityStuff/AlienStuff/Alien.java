@@ -1,5 +1,7 @@
-package TK.game.EntityStuff;
+package TK.game.EntityStuff.AlienStuff;
 
+import TK.game.EntityStuff.Entity;
+import TK.game.EntityStuff.Rank;
 import TK.game.Weapons.Weapon;
 
 import java.io.PrintStream;
@@ -9,14 +11,12 @@ import java.util.List;
 
 import static TK.game.game.getRandomIntInRange;
 import static TK.game.game.getRandomListItem;
-import static java.lang.Math.round;
-
-public class Alien extends Entity{
+public class Alien extends Entity {
     Integer enemyID;
-    String type;
+    AlienType type;
 
-    public Alien(Integer enemyID, String type, Integer hp, Integer aim, Rank rank, String firstname, String lastname, Integer armour, Weapon weapon, List items) {
-        super(hp, aim, rank, armour, weapon, items);
+    public Alien(Integer enemyID, AlienType type, Integer hp, Integer aim, Integer mobility, Rank rank, Integer armour, Weapon weapon, List items) {
+        super(hp, aim, mobility, rank, armour, weapon, items);
 
         this.enemyID = enemyID;
         this.type = type;
