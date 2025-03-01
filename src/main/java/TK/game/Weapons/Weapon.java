@@ -6,17 +6,18 @@ import java.util.Random;
 
 import static TK.game.Weapons.Tier.*;
 import static TK.game.Weapons.WeaponType.ALL;
+import static TK.game.game.getRandomIntInRange;
 
 public abstract class Weapon {
     Random rd = new Random();
-    String name;
-    Tier tier;
-    Integer damage;
-    Integer maxShotsFired;
-    Integer ammo;
-    Integer clipSize;
-    Integer critChance;
-    String sound;
+    public String name;
+    public Tier tier;
+    public Integer damage;
+    public Integer maxShotsFired;
+    public Integer ammo;
+    public Integer clipSize;
+    public Integer critChance;
+    public String sound;
 
     public Weapon(Tier tier) {
         this.name = getName();
@@ -36,10 +37,7 @@ public abstract class Weapon {
 
     public int shoot() {
         int totalDamage = 0;
-        int shotsFired = rd.nextInt(maxShotsFired);
-        if (shotsFired == 0) {
-            shotsFired = 1;
-        }
+        int shotsFired = getRandomIntInRange(1, maxShotsFired);
         if (shotsFired > this.ammo) {
             shotsFired = this.ammo;
         }
@@ -81,7 +79,7 @@ public abstract class Weapon {
 
     public abstract Integer getCritChance();
 
-    public ArrayList<Weapon> createWeaponList(Tier minTier, Tier maxTier, WeaponType weaponType) {
+    public static ArrayList<Weapon> createWeaponList(Tier minTier, Tier maxTier, WeaponType weaponType) {
         Map<Tier, Integer> tierCounts = Map.of(ONE, 40, TWO, 30, THREE, 20, FOUR, 10);
 
         ArrayList<Weapon> weaponList = new ArrayList<>();
@@ -110,13 +108,6 @@ public abstract class Weapon {
             }
         }
         return weaponList;
-    }
-
-    public int getRandomIntInRange(int min, int max) {
-        if (min > max) {
-            throw new IllegalArgumentException("Minimum cannot be higher than maximum");
-        }
-        return rd.nextInt((max - min) + 1) + min;
     }
 
     public static java.util.List<String> sniperNames = new ArrayList<>();

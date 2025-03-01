@@ -1,23 +1,22 @@
 package TK.game.Weapons;
 
-import java.util.*;
+import static TK.game.game.getRandomIntInRange;
+import static TK.game.game.getRandomListItem;
 
 
 public class SubMachineGun extends Weapon {
-    Random random = new Random();
-
     public SubMachineGun(Tier tier) {
         super(tier);
     }
 
     @Override
     public String getSound() {
-        return lightGunSounds.get(random.nextInt(lightGunSounds.size()));
+        return getRandomListItem(lightGunSounds);
     }
 
     @Override
     public String getName() {
-        return SMGNames.get(random.nextInt(SMGNames.size()));
+        return getRandomListItem(SMGNames);
     }
 
     @Override

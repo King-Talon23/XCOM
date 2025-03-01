@@ -2,8 +2,10 @@ package TK.game.Weapons;
 
 import java.util.Random;
 
+import static TK.game.game.getRandomIntInRange;
+import static TK.game.game.getRandomListItem;
+
 public class ShotGun extends Weapon {
-    Random random = new Random();
 
     public ShotGun(Tier tier) {
         super(tier);
@@ -11,12 +13,12 @@ public class ShotGun extends Weapon {
 
     @Override
     public String getSound() {
-        return heavyGunSounds.get(random.nextInt(heavyGunSounds.size()));
+        return getRandomListItem(heavyGunSounds);
     }
 
     @Override
     public String getName() {
-        return shotgunNames.get(random.nextInt(shotgunNames.size()));
+        return getRandomListItem(shotgunNames);
     }
 
     @Override
