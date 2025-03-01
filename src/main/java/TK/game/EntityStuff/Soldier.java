@@ -23,8 +23,10 @@ public class Soldier extends Entity {
     Integer hunkerBonus;
 
     public Soldier(Integer soldierID, Integer hp, Integer aim, Integer mobility, Rank rank, Integer armour, Weapon weapon, List items, Integer bodyModifiers) {
-        super(hp, aim, mobility, rank, armour, weapon, items);
+        super(hp, aim, rank, armour, weapon, items);
 
+        this.ap = mobility;
+        super(hp, aim, mobility, rank, armour, weapon, items);
         this.ap = 0;
         this.soldierID = soldierID;
         this.xp = 0;
@@ -97,6 +99,19 @@ public class Soldier extends Entity {
         // Items still have to be created
         System.out.print("Items: " + this.items[0].name + ", " + this.items[1].name);
     }
+
+    private static final List<String> maleOperativeFirstNames = new ArrayList<>(Arrays.asList("Nomad", "Jin", "Richard", "David", // Solid snake (MGS5)
+            "Clark", "Talon", "Luc"));
+
+    private static final List<String> maleNickNames = new ArrayList<>(Arrays.asList("The King", "The Rook", "The Knight", "Mr. President", "Solid Snake"));
+
+    private static final List<String> femaleOperativeFirstNames = new ArrayList<>(Arrays.asList("Eivor", "Lauren"));
+
+    private static final List<String> femaleNickNames = new ArrayList<>(Arrays.asList("The Queen", "The Bishop"));
+
+    private static final List<String> lastnames = new ArrayList<>(Arrays.asList("Sakai", "Nixon", "Bond", "King", "[Classified]", "Kent"));
+
+    private static final List<String> overwatchMissRetort = new ArrayList<>(Arrays.asList("Damn it, missed the target!", "Shot wide!", "Need to work on my aim.", "Target still active.", "Missed the mark!", "No joy here.", "I've got to do better.", "They're getting away!", "Next time, I'll get 'em.", "Gotta concentrate.", "Enemy still standing.", "Close! But not good enough."));
 
     private static final List<String> maleOperativeFirstNames = new ArrayList<>(Arrays.asList(
             "Nomad", "Jin", "Richard",

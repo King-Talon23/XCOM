@@ -22,9 +22,8 @@ public abstract class Entity {
     public Integer armour;
     public Weapon weapon;
     public List<String> items;
-    public Cover cover;
+    public Integer cover;
     public Boolean onOverwatch;
-    public Boolean EMPActive;
 
     public Entity(Integer hp, Integer aim, Integer mobility, Rank rank, Integer armour, Weapon weapon, List items) {
         this.hp = hp;
@@ -36,6 +35,8 @@ public abstract class Entity {
         this.armour = armour;
         this.weapon = weapon;
         this.items = items;
+        this.cover = 0;
+        this.onOverwatch = false;
         this.cover = HALF;
         this.onOverwatch = false;
         this.EMPActive = false;
