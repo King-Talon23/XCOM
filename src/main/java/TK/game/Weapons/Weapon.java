@@ -13,7 +13,6 @@ public abstract class Weapon {
     public String name;
     public Tier tier;
     public Integer damage;
-    public Integer maxShotsFired;
     public Integer ammo;
     public Integer clipSize;
     public Integer critChance;
@@ -27,7 +26,9 @@ public abstract class Weapon {
         this.ammo = getCritChance();
         this.critChance = getCritChance();
         this.sound = getSound();
-        this.maxShotsFired = getMaxShots();
+        this.critDamage = getCritDamage();
+        this.
+
     }
 
     public void reload() {
@@ -36,33 +37,12 @@ public abstract class Weapon {
 
 
     public int shoot() {
-        int totalDamage = 0;
-        int shotsFired = getRandomIntInRange(1, maxShotsFired);
-        if (shotsFired > this.ammo) {
-            shotsFired = this.ammo;
+        int totalDamage = getRandomIntInRange(getBaseDamage(), (getBaseDamage() + getDamageSpread()));
+        if (getRandomIntInRange(1, 100) < getPlusOneChance()) {
+            totalDamage += 1;
         }
         System.out.print(this.sound);
-        String plural;
-        switch (shotsFired) {
-            case 1 -> plural = "shot";
-            default -> plural = "shots";
-        }
-        System.out.printf("%s %s fired!", shotsFired, plural);
 
-        while (shotsFired > 0) {
-            this.ammo -= 1;
-            totalDamage += (this.damage + (rd.nextInt(4) - 1));
-            // damage variation between -1 and +2
-            shotsFired--;
-            if (this.ammo == 0) {
-                System.out.print("Out of ammo");
-                return totalDamage;
-            }
-        }
-        if (totalDamage <= 0) {
-            totalDamage = 1;
-            return totalDamage;
-        }
         return totalDamage;
 
     }
@@ -73,81 +53,17 @@ public abstract class Weapon {
 
     public abstract Integer getBaseDamage();
 
-    public abstract Integer getMaxShots();
-
     public abstract Integer getzClipSize();
 
     public abstract Integer getCritChance();
 
-    public static ArrayList<Weapon> createWeaponList(Tier minTier, Tier maxTier, WeaponType weaponType) {
-        Map<Tier, Integer> tierCounts = Map.of(ONE, 40, TWO, 30, THREE, 20, FOUR, 10);
+    public abstract Integer getCritDamage();
 
-        ArrayList<Weapon> weaponList = new ArrayList<>();
-        if (weaponType == ALL) {
-            for (Tier currentTier = minTier; currentTier.ordinal() <= maxTier.ordinal(); currentTier = tierMap.get(currentTier)) {
-                int count = tierCounts.get(currentTier);
-                for (int i = 0; i < count; i++) {
-                    weaponList.add(new SniperRifle(currentTier));
-                    weaponList.add(new AssaultRifle(currentTier));
-                    weaponList.add(new ShotGun(currentTier));
-                    weaponList.add(new SubMachineGun(currentTier));
-                }
-            }
+    public abstract Integer getDamageSpread();
 
-        } else {
-            for (Tier currentTier = minTier; currentTier.ordinal() <= maxTier.ordinal(); currentTier = tierMap.get(currentTier)) {
-                int count = tierCounts.get(currentTier);
-                for (int i = 0; i < count; i++) {
-                    switch (weaponType) {
-                        case SNIPER -> weaponList.add(new SniperRifle(currentTier));
-                        case AR -> weaponList.add(new AssaultRifle(currentTier));
-                        case SHOTGUN -> weaponList.add(new ShotGun(currentTier));
-                        case SMG -> weaponList.add(new SubMachineGun(currentTier));
-                    }
-                }
-            }
-        }
-        return weaponList;
-    }
+    public abstract Integer getPlusOneChance();
 
-    public static java.util.List<String> sniperNames = new ArrayList<>();
-
-    static {
-        sniperNames.add("M82");
-        sniperNames.add("Barret .50Cal");
-        sniperNames.add("Remington 700");
-        sniperNames.add("M40");
-        sniperNames.add("Tac50");
-    }
-
-    public static java.util.List<String> shotgunNames = new ArrayList<>();
-
-    static {
-        shotgunNames.add("Spas-12");
-        shotgunNames.add("KSG");
-    }
-
-    public static java.util.List<String> ARNames = new ArrayList<>();
-
-    static {
-        ARNames.add("AK-47");
-        ARNames.add("M16");
-        ARNames.add("AUG");
-        ARNames.add("AR-15");
-        ARNames.add("Scar");
-        ARNames.add("M4A1");
-    }
-
-    public static java.util.List<String> SMGNames = new ArrayList<>();
-
-    static {
-        SMGNames.add("MP5");
-        SMGNames.add("Uzi");
-        SMGNames.add("MP7");
-        SMGNames.add("P90");
-        SMGNames.add("Mac-10");
-        SMGNames.add("Vector");
-    }
+    public abstract Integer getAimBonus();
 
     public static java.util.List<String> lightGunSounds = new ArrayList<>();
 
