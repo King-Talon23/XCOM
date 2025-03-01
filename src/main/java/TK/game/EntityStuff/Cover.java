@@ -13,5 +13,11 @@ public enum Cover {
         coverValue.put(HALF, 20);
         coverValue.put(FULL, 40);
     }
+    public static final Map<Cover, Cover> explosionCoverMap = new HashMap<>();
+    static {
+        explosionCoverMap.put(NONE,FLANKED);
+        explosionCoverMap.put(HALF, NONE);
+        explosionCoverMap.put(FULL, HALF);
+    }
 
 }

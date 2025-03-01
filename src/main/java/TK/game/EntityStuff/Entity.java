@@ -7,6 +7,7 @@ import TK.game.Weapons.Weapon;
 import java.util.List;
 import java.util.Random;
 
+import static TK.game.EntityStuff.Cover.HALF;
 import static TK.game.game.getRandomIntInRange;
 import static TK.game.game.getRandomListItem;
 
@@ -14,6 +15,7 @@ public abstract class Entity {
     Random rd = new Random();
     public Integer hp;
     public Integer aim;
+    public Integer mobility;
     public String firstname;
     public String lastname;
     public Rank rank;
@@ -23,9 +25,10 @@ public abstract class Entity {
     public Integer cover;
     public Boolean onOverwatch;
 
-    public Entity(Integer hp, Integer aim,Rank rank, Integer armour, Weapon weapon, List items) {
+    public Entity(Integer hp, Integer aim, Integer mobility, Rank rank, Integer armour, Weapon weapon, List items) {
         this.hp = hp;
         this.aim = aim;
+        this.mobility = mobility;
         this.rank = rank;
         this.firstname = getFirstname();
         this.lastname = getLastname();
@@ -34,6 +37,9 @@ public abstract class Entity {
         this.items = items;
         this.cover = 0;
         this.onOverwatch = false;
+        this.cover = HALF;
+        this.onOverwatch = false;
+        this.EMPActive = false;
     }
 
     public void isDead() {

@@ -30,4 +30,11 @@ public class game {
         ArrayList<Objects> room = new ArrayList<>();
         int currentRoomNumber = 0;
     }
+
+    public static void print(String text) {
+        System.out.print(text);
+    }
+    public static void println(String text) {
+        System.out.println(text);
+    }
 }
