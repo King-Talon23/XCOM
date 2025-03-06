@@ -1,33 +1,37 @@
 package TK.game.Weapons;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Random;
+import TK.game.Weapons.Weapon_mods.*;
 
-import static TK.game.Weapons.Tier.*;
-import static TK.game.Weapons.WeaponType.ALL;
+import java.util.List;
+
 import static TK.game.game.getRandomIntInRange;
 
 public abstract class Weapon {
-    Random rd = new Random();
     public String name;
-    public Tier tier;
+    public WeaponTier weaponTier;
     public Integer damage;
-    public Integer maxShotsFired;
     public Integer ammo;
     public Integer clipSize;
     public Integer critChance;
     public String sound;
+    public Range range;
+    public Integer armourShredding;
+    public Integer aimBonus;
+    public Integer freeReloads;
 
-    public Weapon(Tier tier) {
+    public List<WeaponMod> weaponMods;
+
+    public Weapon(WeaponTier weaponTier) {
+        this.weaponTier = weaponTier;
         this.name = getName();
-        this.tier = tier;
         this.damage = getBaseDamage();
-        this.clipSize = getzClipSize();
-        this.ammo = getCritChance();
-        this.critChance = getCritChance();
+        this.ammo = getTrueClipSize();
+        this.clipSize = getTrueClipSize();
+        this.range = getEffectiveRange();
+        this.armourShredding = getArmourShredding();
+        this.aimBonus = getTrueAimBonus();
         this.sound = getSound();
-        this.maxShotsFired = getMaxShots();
+        this.freeReloads = getFreeReloads();
     }
 
     public void reload() {
@@ -35,36 +39,62 @@ public abstract class Weapon {
     }
 
 
-    public int shoot() {
-        int totalDamage = 0;
-        int shotsFired = getRandomIntInRange(1, maxShotsFired);
-        if (shotsFired > this.ammo) {
-            shotsFired = this.ammo;
-        }
-        System.out.print(this.sound);
-        String plural;
-        switch (shotsFired) {
-            case 1 -> plural = "shot";
-            default -> plural = "shots";
-        }
-        System.out.printf("%s %s fired!", shotsFired, plural);
+    public Integer shoot() {
+        // damage range is between base damage and the damage spread added to the base
+        int totalDamage = getRandomIntInRange(getBaseDamage(), (getBaseDamage() + getDamageSpread()));
 
-        while (shotsFired > 0) {
-            this.ammo -= 1;
-            totalDamage += (this.damage + (rd.nextInt(4) - 1));
-            // damage variation between -1 and +2
-            shotsFired--;
-            if (this.ammo == 0) {
-                System.out.print("Out of ammo");
-                return totalDamage;
-            }
+        if (getTrueCritChance() >= getRandomIntInRange(1, 100)) {
+            totalDamage += getDamageOnCrit();
         }
-        if (totalDamage <= 0) {
-            totalDamage = 1;
-            return totalDamage;
+        if (getRandomIntInRange(1, 100) <= getInstantKillChance()) {
+            totalDamage += 999;
+            System.out.print("Repeater Activated");
         }
         return totalDamage;
+    }
 
+
+    public Integer getTrueAimBonus() {
+        return (getAimBonus() + cycleThroughMods(Scope.class));
+    }
+
+    public Integer getTrueCritChance() {
+        return getCritChance() + cycleThroughMods(LaserSight.class);
+    }
+
+    public Integer getMissedShotDamage() {
+        return cycleThroughMods(Stock.class);
+    }
+
+    public Integer getTrueClipSize() {
+        return cycleThroughMods(ExtendedMagazine.class);
+    }
+
+    public Integer getInstantKillChance() {
+        return cycleThroughMods(Repeater.class);
+    }
+
+    public Integer getFreeReloads() {
+        return cycleThroughMods(AutoLoader.class);
+    }
+
+    private Integer cycleThroughMods(Class<? extends WeaponMod> modClass) {
+        // returns 0 if the player doesnt have the required mod
+        for (WeaponMod mod : weaponMods) {
+            if (modClass.isInstance(mod)) {
+                return mod.applyEffect();
+            }
+        }
+        return 0;
+    }
+
+
+    public Integer getAllowedMods() {
+        // returns the amount of mods that can be added to a weapon based off tier
+        return switch (this.weaponTier) {
+            case CONVENTIONAL -> 1;
+            case MAGNETIC, PLASMA -> 2;
+        };
     }
 
     public abstract String getSound();
@@ -73,101 +103,20 @@ public abstract class Weapon {
 
     public abstract Integer getBaseDamage();
 
-    public abstract Integer getMaxShots();
-
-    public abstract Integer getzClipSize();
+    public abstract Integer getClipSize();
 
     public abstract Integer getCritChance();
 
-    public static ArrayList<Weapon> createWeaponList(Tier minTier, Tier maxTier, WeaponType weaponType) {
-        Map<Tier, Integer> tierCounts = Map.of(ONE, 40, TWO, 30, THREE, 20, FOUR, 10);
+    public abstract Integer getDamageOnCrit();
 
-        ArrayList<Weapon> weaponList = new ArrayList<>();
-        if (weaponType == ALL) {
-            for (Tier currentTier = minTier; currentTier.ordinal() <= maxTier.ordinal(); currentTier = tierMap.get(currentTier)) {
-                int count = tierCounts.get(currentTier);
-                for (int i = 0; i < count; i++) {
-                    weaponList.add(new SniperRifle(currentTier));
-                    weaponList.add(new AssaultRifle(currentTier));
-                    weaponList.add(new ShotGun(currentTier));
-                    weaponList.add(new SubMachineGun(currentTier));
-                }
-            }
+    public abstract Integer getDamageSpread();
 
-        } else {
-            for (Tier currentTier = minTier; currentTier.ordinal() <= maxTier.ordinal(); currentTier = tierMap.get(currentTier)) {
-                int count = tierCounts.get(currentTier);
-                for (int i = 0; i < count; i++) {
-                    switch (weaponType) {
-                        case SNIPER -> weaponList.add(new SniperRifle(currentTier));
-                        case AR -> weaponList.add(new AssaultRifle(currentTier));
-                        case SHOTGUN -> weaponList.add(new ShotGun(currentTier));
-                        case SMG -> weaponList.add(new SubMachineGun(currentTier));
-                    }
-                }
-            }
-        }
-        return weaponList;
-    }
+    public abstract Integer getPlusOneChance();
 
-    public static java.util.List<String> sniperNames = new ArrayList<>();
+    public abstract Integer getAimBonus();
 
-    static {
-        sniperNames.add("M82");
-        sniperNames.add("Barret .50Cal");
-        sniperNames.add("Remington 700");
-        sniperNames.add("M40");
-        sniperNames.add("Tac50");
-    }
+    public abstract Range getEffectiveRange();
 
-    public static java.util.List<String> shotgunNames = new ArrayList<>();
+    public abstract Integer getArmourShredding();
 
-    static {
-        shotgunNames.add("Spas-12");
-        shotgunNames.add("KSG");
-    }
-
-    public static java.util.List<String> ARNames = new ArrayList<>();
-
-    static {
-        ARNames.add("AK-47");
-        ARNames.add("M16");
-        ARNames.add("AUG");
-        ARNames.add("AR-15");
-        ARNames.add("Scar");
-        ARNames.add("M4A1");
-    }
-
-    public static java.util.List<String> SMGNames = new ArrayList<>();
-
-    static {
-        SMGNames.add("MP5");
-        SMGNames.add("Uzi");
-        SMGNames.add("MP7");
-        SMGNames.add("P90");
-        SMGNames.add("Mac-10");
-        SMGNames.add("Vector");
-    }
-
-    public static java.util.List<String> lightGunSounds = new ArrayList<>();
-
-    // SMGs and ARs
-    static {
-        lightGunSounds.add("*BRRRRRRR*");
-        lightGunSounds.add("*Pew-Pew-Pew*");
-        lightGunSounds.add("*Bang-Bang*");
-        lightGunSounds.add("*BRRAP!*");
-    }
-
-    public static java.util.List<String> heavyGunSounds = new ArrayList<>();
-
-    // Snipers and Shotguns
-    static {
-        heavyGunSounds.add("*BANG*");
-        heavyGunSounds.add("*CRACK");
-        heavyGunSounds.add("*POP!*");
-        heavyGunSounds.add("*SNAP*");
-        heavyGunSounds.add("*POW*");
-        heavyGunSounds.add("*CHK CHK BOOM!*");
-    }
 }

@@ -1,14 +1,14 @@
 package TK.game.Weapons;
 
-import java.util.Random;
+import java.util.Map;
 
-import static TK.game.game.getRandomIntInRange;
+import static TK.game.Weapons.WeaponTier.*;
 import static TK.game.game.getRandomListItem;
 
 public class ShotGun extends Weapon {
 
-    public ShotGun(Tier tier) {
-        super(tier);
+    public ShotGun(WeaponTier weaponTier) {
+        super(weaponTier);
     }
 
     @Override
@@ -18,57 +18,81 @@ public class ShotGun extends Weapon {
 
     @Override
     public String getName() {
-        return getRandomListItem(shotgunNames);
+        Map<WeaponTier, String> shotgunNames = Map.of(
+                CONVENTIONAL, "Shotgun",
+                MAGNETIC, "Shard Gun",
+                PLASMA, "Storm Gun"
+        );
+
+        return shotgunNames.get(this.weaponTier);
     }
 
     @Override
     public Integer getBaseDamage() {
-        // damage per bullet
-        return switch (this.tier) {
-            case ONE -> getRandomIntInRange(7, 8);
+        return switch (this.weaponTier) {
+            case CONVENTIONAL -> 4;
 
-            case TWO -> getRandomIntInRange(9, 10);
+            case MAGNETIC -> 6;
 
-            case THREE -> getRandomIntInRange(11, 12);
-
-            case FOUR -> getRandomIntInRange(14, 16);
+            case PLASMA -> 8;
         };
+
     }
 
     @Override
-    public Integer getMaxShots() {
-        return switch (this.tier) {
-            case ONE, TWO, THREE -> 1;
-
-            case FOUR -> 2;
-        };
-    }
-
-    @Override
-    public Integer getzClipSize() {
-        return switch (this.tier) {
-            case ONE -> 2;
-
-            case TWO -> 4;
-
-            case THREE -> 6;
-
-            case FOUR -> 8;
-
-        };
+    public Integer getClipSize() {
+        return 4;
     }
 
     @Override
     public Integer getCritChance() {
-        // shotguns have a higher chance to crit because of their low chance to hit
-        return switch (this.tier) {
-            case ONE -> getRandomIntInRange(15, 20);
+        return switch (this.weaponTier) {
+            case CONVENTIONAL -> 10;
 
-            case TWO -> getRandomIntInRange(20, 25);
+            case MAGNETIC -> 15;
 
-            case THREE -> getRandomIntInRange(25, 30);
-
-            case FOUR -> getRandomIntInRange(33, 40);
+            case PLASMA -> 20;
         };
     }
+
+    @Override
+    public Integer getDamageOnCrit() {
+        return switch (this.weaponTier) {
+            case CONVENTIONAL -> 3;
+
+            case MAGNETIC -> 4;
+
+            case PLASMA -> 5;
+        };
+    }
+
+    @Override
+    public Integer getDamageSpread() {
+        return 2;
+    }
+
+    @Override
+    public Integer getPlusOneChance() {
+        return 0;
+    }
+
+    @Override
+    public Integer getAimBonus() {
+        return 0;
+    }
+
+    @Override
+    public Range getEffectiveRange() {
+        return Range.LOW;
+    }
+
+    @Override
+    public Integer getArmourShredding() {
+        return 0;
+    }
+
+
 }
+
+
+

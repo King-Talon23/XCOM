@@ -5,8 +5,8 @@ import java.util.Map;
 import static TK.game.Weapons.WeaponTier.*;
 import static TK.game.game.getRandomListItem;
 
-public class AssaultRifle extends Weapon {
-    public AssaultRifle(WeaponTier weaponTier) {
+public class Cannon extends Weapon {
+    public Cannon(WeaponTier weaponTier) {
         super(weaponTier);
     }
 
@@ -18,9 +18,9 @@ public class AssaultRifle extends Weapon {
     @Override
     public String getName() {
         Map<WeaponTier, String> shotgunNames = Map.of(
-                CONVENTIONAL, "Assault Rifle",
-                MAGNETIC, "Magnetic Rifle",
-                PLASMA, "Plasma Rifle"
+                CONVENTIONAL, "Cannon",
+                MAGNETIC, "Mag Cannon",
+                PLASMA, "Beam Cannon"
         );
 
         return shotgunNames.get(this.weaponTier);
@@ -29,11 +29,11 @@ public class AssaultRifle extends Weapon {
     @Override
     public Integer getBaseDamage() {
         return switch (this.weaponTier) {
-            case CONVENTIONAL -> 3;
+            case CONVENTIONAL -> 4;
 
-            case MAGNETIC -> 5;
+            case MAGNETIC -> 6;
 
-            case PLASMA -> 7;
+            case PLASMA -> 8;
         };
 
     }
@@ -81,8 +81,13 @@ public class AssaultRifle extends Weapon {
 
     @Override
     public Integer getArmourShredding() {
-        return 0;
+        // Cannon shreds +1 armor each tier
+        // CONVENTIONAL -> 1
+        // MAGNETIC -> 2
+        // PLASMA -> 3
+        return this.weaponTier.ordinal();
     }
 
 
 }
+
