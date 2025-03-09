@@ -2,9 +2,10 @@ package TK.game.StatusEffects;
 
 import static TK.game.game.getRandomIntInRange;
 
-public class Burning extends StatusEffect implements StatusEffect.DamageEffect {
-    public Burning() {
-        super(2);
+public class ChryssalidPoison extends StatusEffect implements StatusEffect.DamageEffect {
+    public ChryssalidPoison() {
+        // lasts until cured or death
+        super(999);
     }
 
     @Override
@@ -15,7 +16,6 @@ public class Burning extends StatusEffect implements StatusEffect.DamageEffect {
 
     @Override
     public String getName() {
-        return "Burning";
+        return "Chryssalid Poison";
     }
-
 }

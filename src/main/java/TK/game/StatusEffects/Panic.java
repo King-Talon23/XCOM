@@ -1,4 +1,5 @@
 package TK.game.StatusEffects;
 
-public class panic {
+public class Panic {
+
 }

@@ -1,9 +1,8 @@
 package TK.game.StatusEffects;
-
 import static TK.game.game.getRandomIntInRange;
 
-public class Burning extends StatusEffect implements StatusEffect.DamageEffect {
-    public Burning() {
+public class AcidBurn extends StatusEffect implements StatusEffect.DamageEffect {
+    public AcidBurn() {
         super(2);
     }
 
@@ -12,10 +11,9 @@ public class Burning extends StatusEffect implements StatusEffect.DamageEffect {
         return getRandomIntInRange(1,3);
     }
 
-
     @Override
     public String getName() {
-        return "Burning";
+        return "Acid Burn";
     }
 
 }

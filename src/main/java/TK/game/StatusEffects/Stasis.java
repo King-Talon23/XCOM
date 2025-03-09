@@ -1,4 +1,4 @@
 package TK.game.StatusEffects;
 
-public class bleeding {
+public class Stasis {
 }

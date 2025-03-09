@@ -1,4 +1,4 @@
 package TK.game.StatusEffects;
 
-public class MindControl {
+public class Unconscious {
 }
