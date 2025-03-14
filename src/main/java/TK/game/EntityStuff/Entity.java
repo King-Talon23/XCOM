@@ -1,45 +1,55 @@
 package TK.game.EntityStuff;
 
-import TK.game.Weapons.ShotGun;
-import TK.game.Weapons.SniperRifle;
+import TK.game.Items.Item;
 import TK.game.Weapons.Weapon;
 
-import java.util.List;
-import java.util.Random;
 
-import static TK.game.EntityStuff.Cover.HALF;
+import java.util.*;
+
+
+import static TK.game.EntityStuff.Cover.*;
+import static TK.game.EntityStuff.Cover.coverValue;
 import static TK.game.game.getRandomIntInRange;
-import static TK.game.game.getRandomListItem;
+
 
 public abstract class Entity {
-    Random rd = new Random();
     public Integer hp;
     public Integer aim;
     public Integer mobility;
-    public String firstname;
-    public String lastname;
-    public Rank rank;
+    public Integer hack;
+    public Integer dodge;
+    public Integer will;
+    public Integer defense;
+
+    public Integer cover;
     public Integer armour;
     public Weapon weapon;
-    public List<String> items;
-    public Integer cover;
-    public Boolean onOverwatch;
+    public List<Item> items;
+    public Cover coverType;
 
-    public Entity(Integer hp, Integer aim, Integer mobility, Rank rank, Integer armour, Weapon weapon, List items) {
+    //numbers from 1-100 spread accross 3 lists to represent the result of shot
+    List<Integer> missed = new ArrayList<>();
+    List<Integer> grazed = new ArrayList<>();
+    List<Integer> hit = new ArrayList<>();
+    Integer result;
+
+    Integer GRAZE_CHANCE = 20;
+
+
+    public Entity(Integer hp, Integer aim, Integer mobility, Integer dodge, Integer will,
+                  Integer defense, Integer hack, Integer armour, Weapon weapon, List<Item> items) {
         this.hp = hp;
         this.aim = aim;
         this.mobility = mobility;
-        this.rank = rank;
-        this.firstname = getFirstname();
-        this.lastname = getLastname();
+        this.dodge = dodge;
+        this.hack = hack;
+        this.will = will;
+        this.defense = defense;
         this.armour = armour;
         this.weapon = weapon;
         this.items = items;
-        this.cover = 0;
-        this.onOverwatch = false;
-        this.cover = HALF;
-        this.onOverwatch = false;
-        this.EMPActive = false;
+        this.coverType = NONE;
+        this.cover = coverValue.get(this.coverType);
     }
 
     public void isDead() {
@@ -47,65 +57,88 @@ public abstract class Entity {
             this.handleDeath();
         }
     }
+
     public void reload() {
         this.weapon.reload();
     }
 
-    public abstract String getFirstname();
-    public abstract String getLastname();
-
-    private int isCrit(Entity target) {
-        return this.weapon.critChance - target.cover / 4;
-    }
-
-    private Boolean doesWeaponHit(Integer chanceToHit){
-        return getRandomIntInRange(1,100) < chanceToHit;
-    }
-
-    public boolean shootAtTarget(Entity target, Integer chanceToHit) {
-
-        int crit = this.isCrit(target);
-        this.onOverwatch = false; // shooting turns off overwatch
-        if (doesWeaponHit(chanceToHit)) {
-            int damage = this.weapon.shoot();
-            System.out.print(this.weapon.sound);
-            if (getRandomIntInRange(1,100) < crit) {
-                System.out.print("CRITICAL!");
-                damage += damage / 2; // 50% crit bonus
-            }
-            System.out.print(damage + " damage!");
-            target.hp -= damage;
-            target.isDead();
-            return true;
-        } else {
-            this.weapon.ammo -= 1;
-            System.out.print(this.weapon.sound);
-            System.out.print("Missed!");
-            return false;
+    public void shootAtTarget(Entity target) {
+        // doesDodge decreases the shot type from crit->hit->graze->miss
+        boolean doesDodge = false;
+        if (result < 100) {  // always false if entity has a 100% chanceToHit
+            doesDodge = doesTargetDodge(target.dodge);
         }
+
+        // doesCrit increases the shot type from miss->graze->hit->crit
+        boolean doesCrit = doesShotCrit();
+
+        result = getRandomIntInRange(1, 100);
+        Weapon.ShotBehaviour shotType = getShotType(doesCrit, doesDodge);
+        if (shotType != Weapon.ShotBehaviour.MISS) { // in case of shots being downgraded from graze to miss
+            int damage = Weapon.shotTypeMap.get(shotType);
+
+            if (target.armour > 0) {
+                target.armour -= this.weapon.armourShredding;
+                target.armour = Math.max(0, target.armour);
+            }
+
+            target.hp -= damage - target.armour;
+            target.isDead();
+        } else {
+            System.out.print("missed! loser");
+        }
+        this.weapon.ammo--;
     }
+
 
     public int aimAtTarget(Entity target) {
-        int hitChance = this.aim - target.cover;
-
-        if (this.items.contains("scope")){
-            hitChance += 10;
-        }
-        if (this.weapon instanceof SniperRifle) {
-            hitChance += 10;
-        }
-        if (this.weapon instanceof ShotGun) {
-            hitChance -= 10;
-        }
+        int hitChance = (this.aim + this.weapon.aimBonus) - (target.cover + target.defense);
         hitChance = Math.max(0, Math.min(hitChance, 100));
+        hitChance -= 10; // half of graze chance is represented by the 10 lowest values of the hitChance
+
+        int missChance = 100 - (GRAZE_CHANCE + hitChance);
+
+        missed.clear();
+        grazed.clear();
+        hit.clear();
+        for (int i = 0; i < 100; i++) {
+            if (i <= missChance) {
+                missed.add(i);
+            } else if (i <= missChance + GRAZE_CHANCE) {
+                grazed.add(i);
+            } else {
+                hit.add(i);
+            }
+        }
+
         return hitChance;
     }
 
+    public abstract void handleDeath();
 
-    public boolean handleOverwatch(Entity target) {
-        int chance = this.aimAtTarget(target);
-        return this.shootAtTarget(target, chance);
+    private Weapon.ShotBehaviour getShotType(Boolean doesUpgrade, Boolean doesDowngrade) {
+        Weapon.ShotBehaviour currentType;
+        if (grazed.contains(result)) {
+            currentType = Weapon.ShotBehaviour.GRAZE;
+        } else if (hit.contains(result)) {
+            currentType = Weapon.ShotBehaviour.HIT;
+        } else {
+            currentType = Weapon.ShotBehaviour.MISS;
+        }
+
+        if (doesUpgrade && !doesDowngrade) {
+            return Weapon.shotUpgradeMap.get(currentType);
+        } else if (!doesUpgrade && doesDowngrade) {
+            return Weapon.shotDowngradeMap.get(currentType);
+        }
+        return currentType;
     }
 
-    public abstract void handleDeath();
+    private Boolean doesShotCrit() {
+        return getRandomIntInRange(1, 100) <= this.weapon.getTrueCritChance();
+    }
+
+    private Boolean doesTargetDodge(Integer dodge) {
+        return getRandomIntInRange(1, 100) <= dodge;
+    }
 }

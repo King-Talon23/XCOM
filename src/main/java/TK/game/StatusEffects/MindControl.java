@@ -1,4 +1,4 @@
-package TK.game.Status_effects;
+package TK.game.StatusEffects;
 
-public class mindControl {
+public class MindControl {
 }
