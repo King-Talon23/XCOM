@@ -1,19 +1,18 @@
 package TK.game.Weapons;
 
-import TK.game.Weapons.Weapon_mods.*;
+import TK.game.Weapons.WeaponMods.*;
 
 import java.util.List;
+import java.util.Map;
 
 import static TK.game.game.getRandomIntInRange;
 
 public abstract class Weapon {
     public String name;
-    public WeaponTier weaponTier;
+    public static WeaponTier weaponTier;
     public Integer damage;
     public Integer ammo;
     public Integer clipSize;
-    public Integer critChance;
-    public String sound;
     public Range range;
     public Integer armourShredding;
     public Integer aimBonus;
@@ -30,13 +29,50 @@ public abstract class Weapon {
         this.range = getEffectiveRange();
         this.armourShredding = getArmourShredding();
         this.aimBonus = getTrueAimBonus();
-        this.sound = getSound();
-        this.freeReloads = getFreeReloads();
     }
 
     public void reload() {
         this.ammo = this.clipSize;
     }
+
+    public enum ShotBehaviour {
+        MISS, GRAZE, HIT, CRIT;
+    }
+
+    public static final Map<ShotBehaviour, Integer> shotTypeMap = Map.of(
+            ShotBehaviour.GRAZE, grazedShot(),
+            ShotBehaviour.HIT, normalShot(),
+            ShotBehaviour.CRIT, critShot()
+    );
+
+    public static Map<ShotBehaviour, ShotBehaviour> shotUpgradeMap = Map.of (
+            ShotBehaviour.MISS, ShotBehaviour.GRAZE,
+            ShotBehaviour.GRAZE, ShotBehaviour.HIT,
+            ShotBehaviour.HIT, ShotBehaviour.CRIT
+    );
+
+    public static Map<ShotBehaviour, ShotBehaviour> shotDowngradeMap = Map.of (
+            ShotBehaviour.CRIT, ShotBehaviour.HIT,
+            ShotBehaviour.HIT, ShotBehaviour.GRAZE,
+            ShotBehaviour.GRAZE, ShotBehaviour.MISS
+    );
+
+
+    public static Integer normalShot(){
+        // damage range is between base damage and the damage spread added to the base
+        return getRandomIntInRange(getBaseDamage(), (getBaseDamage() + getDamageSpread()));
+    }
+
+    public static Integer critShot(){
+        // adds crit bonus to normal damage
+        return normalShot() + getDamageOnCrit();
+    }
+
+    public static Integer grazedShot(){
+        // one quarter of normal damage inflicted on dodge/graze
+        return (int) (normalShot() * 0.25);
+    }
+
 
 
     public Integer shoot() {
@@ -91,7 +127,7 @@ public abstract class Weapon {
 
     public Integer getAllowedMods() {
         // returns the amount of mods that can be added to a weapon based off tier
-        return switch (this.weaponTier) {
+        return switch (weaponTier) {
             case CONVENTIONAL -> 1;
             case MAGNETIC, PLASMA -> 2;
         };
@@ -101,15 +137,21 @@ public abstract class Weapon {
 
     public abstract String getName();
 
-    public abstract Integer getBaseDamage();
+    public static Integer getBaseDamage() {
+        return null;
+    }
 
     public abstract Integer getClipSize();
 
     public abstract Integer getCritChance();
 
-    public abstract Integer getDamageOnCrit();
+    public static Integer getDamageOnCrit() {
+        return null;
+    }
 
-    public abstract Integer getDamageSpread();
+    public static Integer getDamageSpread() {
+        return null;
+    }
 
     public abstract Integer getPlusOneChance();
 
