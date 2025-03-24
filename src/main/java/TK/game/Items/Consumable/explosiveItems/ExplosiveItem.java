@@ -1,14 +1,14 @@
 package TK.game.Items.Consumable.explosiveItems;
 
-import TK.game.EntityStuff.Entity;
+import TK.Entities.Entity;
 import TK.game.Items.Item;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static TK.game.EntityStuff.Cover.FLANKED;
-import static TK.game.EntityStuff.Cover.explosionCoverMap;
+import static TK.Entities.SoldierStuff.Cover.FLANKED;
+import static TK.Entities.SoldierStuff.Cover.explosionCoverMap;
 import static TK.game.game.*;
 
 public abstract class ExplosiveItem extends Item {

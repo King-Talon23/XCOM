@@ -1,6 +1,6 @@
 package TK.game.Items.Consumable.healingItems;
 
-import TK.game.EntityStuff.Entity;
+import TK.Entities.Entity;
 import TK.game.Items.Item;
 
 import static TK.game.game.getRandomIntInRange;

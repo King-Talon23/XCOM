@@ -1,10 +1,7 @@
 package TK.game.Items.Consumable.miscItems;
 
-import TK.game.EntityStuff.Entity;
+import TK.Entities.Entity;
 import TK.game.Items.Item;
-
-import static TK.game.EntityStuff.Cover.FLANKED;
-import static TK.game.EntityStuff.Cover.explosionCoverMap;
 
 public class EMP extends Item {
     @Override
